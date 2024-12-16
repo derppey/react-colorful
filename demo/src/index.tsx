@@ -40,7 +40,13 @@ const Demo = () => {
 
   const stargazerCount = useStargazerCount();
 
-  const handleChange = (color: RgbaColor, event: MouseEvent | TouchEvent | KeyboardEvent) => {
+  const handleChange = ({
+    color,
+    event,
+  }: {
+    color: RgbaColor;
+    event: MouseEvent | TouchEvent | KeyboardEvent;
+  }) => {
     console.log("🎨", color, event);
     setColor(color);
   };

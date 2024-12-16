@@ -20,7 +20,7 @@ export function PickerPreview<T extends AnyColor>({
 }: Props<T>): JSX.Element {
   const [color, setColor] = useState<T | undefined>(initialColor);
 
-  const handleChange = (color: T) => {
+  const handleChange = ({ color }: { color: T }) => {
     console.log("🎨", color);
     setColor(color);
   };

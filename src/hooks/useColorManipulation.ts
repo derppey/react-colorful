@@ -6,13 +6,16 @@ import { useEventCallback } from "./useEventCallback";
 export function useColorManipulation<T extends AnyColor>(
   colorModel: ColorModel<T>,
   color: T,
-  onChange?: (color: T, event: MouseEvent | TouchEvent | KeyboardEvent) => void
+  onChange?: (props: { color: T; event: MouseEvent | TouchEvent | KeyboardEvent }) => void
 ): [
   HsvaColor,
   (color: Partial<HsvaColor>, event: MouseEvent | TouchEvent | KeyboardEvent) => void
 ] {
   // Save onChange callback in the ref for avoiding "useCallback hell"
-  const onChangeCallback = useEventCallback<T>(onChange);
+  const onChangeCallback = useEventCallback<{
+    color: T;
+    event: MouseEvent | TouchEvent | KeyboardEvent;
+  }>(onChange);
 
   // No matter which color model is used (HEX, RGB(A) or HSL(A)),
   // all internal calculations are based on HSVA model
@@ -44,7 +47,7 @@ export function useColorManipulation<T extends AnyColor>(
       ) {
         cache.current = { hsva: newHsva, color: newColor };
         updateHsva((current) => Object.assign({}, current, params));
-        onChangeCallback(newColor, event);
+        onChangeCallback({ color: newColor, event });
       }
     },
     [colorModel, hsva, onChangeCallback]
