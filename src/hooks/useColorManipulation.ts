@@ -6,8 +6,11 @@ import { useEventCallback } from "./useEventCallback";
 export function useColorManipulation<T extends AnyColor>(
   colorModel: ColorModel<T>,
   color: T,
-  onChange?: (color: T) => void
-): [HsvaColor, (color: Partial<HsvaColor>) => void] {
+  onChange?: (color: T, event: MouseEvent | TouchEvent | KeyboardEvent) => void
+): [
+  HsvaColor,
+  (color: Partial<HsvaColor>, event: MouseEvent | TouchEvent | KeyboardEvent) => void
+] {
   // Save onChange callback in the ref for avoiding "useCallback hell"
   const onChangeCallback = useEventCallback<T>(onChange);
 
@@ -29,24 +32,23 @@ export function useColorManipulation<T extends AnyColor>(
     }
   }, [color, colorModel]);
 
-  // Trigger `onChange` callback only if an updated color is different from cached one;
-  // save the new color to the ref to prevent unnecessary updates
-  useEffect(() => {
-    let newColor;
-    if (
-      !equalColorObjects(hsva, cache.current.hsva) &&
-      !colorModel.equal((newColor = colorModel.fromHsva(hsva)), cache.current.color)
-    ) {
-      cache.current = { hsva, color: newColor };
-      onChangeCallback(newColor);
-    }
-  }, [hsva, colorModel, onChangeCallback]);
-
   // Merge the current HSVA color object with updated params.
   // For example, when a child component sends `h` or `s` only
-  const handleChange = useCallback((params: Partial<HsvaColor>) => {
-    updateHsva((current) => Object.assign({}, current, params));
-  }, []);
+  const handleChange = useCallback(
+    (params: Partial<HsvaColor>, event: MouseEvent | KeyboardEvent | TouchEvent) => {
+      let newColor;
+      const newHsva = Object.assign({}, hsva, params);
+      if (
+        !equalColorObjects(newHsva, cache.current.hsva) &&
+        !colorModel.equal((newColor = colorModel.fromHsva(newHsva)), cache.current.color)
+      ) {
+        cache.current = { hsva: newHsva, color: newColor };
+        updateHsva((current) => Object.assign({}, current, params));
+        onChangeCallback(newColor, event);
+      }
+    },
+    [colorModel, hsva, onChangeCallback]
+  );
 
   return [hsva, handleChange];
 }

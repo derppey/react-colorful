@@ -12,17 +12,17 @@ import { HsvaColor } from "../../types";
 interface Props {
   className?: string;
   hsva: HsvaColor;
-  onChange: (newAlpha: { a: number }) => void;
+  onChange: (newAlpha: { a: number }, event: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
 export const Alpha = ({ className, hsva, onChange }: Props): JSX.Element => {
   const handleMove = (interaction: Interaction) => {
-    onChange({ a: interaction.left });
+    onChange({ a: interaction.left }, interaction.event);
   };
 
   const handleKey = (offset: Interaction) => {
     // Alpha always fit into [0, 1] range
-    onChange({ a: clamp(hsva.a + offset.left) });
+    onChange({ a: clamp(hsva.a + offset.left) }, offset.event);
   };
 
   // We use `Object.assign` instead of the spread operator

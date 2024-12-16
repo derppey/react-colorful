@@ -8,23 +8,32 @@ import { round } from "../../utils/round";
 
 interface Props {
   hsva: HsvaColor;
-  onChange: (newColor: { s: number; v: number }) => void;
+  onChange: (
+    newColor: { s: number; v: number },
+    event: MouseEvent | TouchEvent | KeyboardEvent
+  ) => void;
 }
 
 const SaturationBase = ({ hsva, onChange }: Props) => {
   const handleMove = (interaction: Interaction) => {
-    onChange({
-      s: interaction.left * 100,
-      v: 100 - interaction.top * 100,
-    });
+    onChange(
+      {
+        s: interaction.left * 100,
+        v: 100 - interaction.top * 100,
+      },
+      interaction.event
+    );
   };
 
   const handleKey = (offset: Interaction) => {
     // Saturation and brightness always fit into [0, 100] range
-    onChange({
-      s: clamp(hsva.s + offset.left * 100, 0, 100),
-      v: clamp(hsva.v - offset.top * 100, 0, 100),
-    });
+    onChange(
+      {
+        s: clamp(hsva.s + offset.left * 100, 0, 100),
+        v: clamp(hsva.v - offset.top * 100, 0, 100),
+      },
+      offset.event
+    );
   };
 
   const containerStyle = {

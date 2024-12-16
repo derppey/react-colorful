@@ -6,6 +6,7 @@ import { clamp } from "../../utils/clamp";
 export interface Interaction {
   left: number;
   top: number;
+  event: MouseEvent | TouchEvent | KeyboardEvent;
 }
 
 // Check if an event was triggered by touch
@@ -38,6 +39,7 @@ const getRelativePosition = (
   return {
     left: clamp((pointer.pageX - (rect.left + getParentWindow(node).pageXOffset)) / rect.width),
     top: clamp((pointer.pageY - (rect.top + getParentWindow(node).pageYOffset)) / rect.height),
+    event,
   };
 };
 
@@ -121,6 +123,7 @@ const InteractiveBase = ({ onMove, onKey, ...rest }: Props) => {
       onKeyCallback({
         left: keyCode === 39 ? 0.05 : keyCode === 37 ? -0.05 : 0,
         top: keyCode === 40 ? 0.05 : keyCode === 38 ? -0.05 : 0,
+        event: event.nativeEvent,
       });
     };
 

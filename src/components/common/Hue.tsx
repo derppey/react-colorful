@@ -11,19 +11,22 @@ import { round } from "../../utils/round";
 interface Props {
   className?: string;
   hue: number;
-  onChange: (newHue: { h: number }) => void;
+  onChange: (newHue: { h: number }, event: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
 const HueBase = ({ className, hue, onChange }: Props) => {
   const handleMove = (interaction: Interaction) => {
-    onChange({ h: 360 * interaction.left });
+    onChange({ h: 360 * interaction.left }, interaction.event);
   };
 
   const handleKey = (offset: Interaction) => {
     // Hue measured in degrees of the color circle ranging from 0 to 360
-    onChange({
-      h: clamp(hue + offset.left * 360, 0, 360),
-    });
+    onChange(
+      {
+        h: clamp(hue + offset.left * 360, 0, 360),
+      },
+      offset.event
+    );
   };
 
   const nodeClassName = formatClassName(["react-colorful__hue", className]);

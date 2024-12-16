@@ -48,7 +48,7 @@ type ColorPickerHTMLAttributes = Omit<
 
 export interface ColorPickerBaseProps<T extends AnyColor> extends ColorPickerHTMLAttributes {
   color: T;
-  onChange: (newColor: T) => void;
+  onChange: (newColor: T, event: MouseEvent | TouchEvent | KeyboardEvent) => void;
 }
 
 type ColorInputHTMLAttributes = Omit<
